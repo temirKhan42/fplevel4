@@ -38,7 +38,7 @@ const LoginForm = () => {
         setAuthFailed(false);
         localStorage.setItem('userId', JSON.stringify(data));
         auth.logIn();
-        router.push('/');
+        router.push('/home');
       } catch (err) {
         if (option.username === '' && option.password === '') {
           return;

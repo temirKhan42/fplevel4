@@ -52,6 +52,9 @@ const MessageForm = () => {
   const inputRef = useRef();
   useEffect(() => {
     inputRef.current.select();
+    auth.socket?.onAddMessage((data) => {
+      console.log('Message that need to add is - ', data);
+    });
   });
 
   const auth = useAuth();
@@ -123,6 +126,8 @@ const MessageForm = () => {
 };
 
 const Messages = () => {
+
+
   const { t } = useTranslation('translation', { keyPrefix: 'homePage.message count' });
   const { channels, currentChannelId, messages } = useSelector((state) => state.chat);
   console.log(channels, currentChannelId);

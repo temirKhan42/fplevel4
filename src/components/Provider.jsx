@@ -5,9 +5,9 @@ import { useTranslation } from 'react-i18next';
 import { ToastContainer, toast } from 'react-toastify';
 import authContext from '../utils/context/index';
 import '../utils/i18n';
-import Pusher from 'pusher-js';
-import axios from 'axios';
+import { useRouter } from 'next/router';
 import Nav from './Nav';
+import Socket from '../utils/Socket';
 
 import {
   addChannel,
@@ -15,55 +15,43 @@ import {
   renameChannel,
   addMessage,
 } from '../store/slices/chatSlice';
-import routes from '../utils/routes';
 
 const MyProvider = ({ children }) => {
-  const pusher = new Pusher('181714b03f5aa4d3cb65', {
-    cluster: 'ap2',
-  });
-  
-  const channel = pusher.subscribe('my-channel');
-
-  const connectSocket = async () => {
-    try {
-      const { data } = await axios.post(routes.socketStart(), {
-        message: 'Hi from client',
-      });
-    } catch(err) {
-      console.error('Socket failed');
-    }
-  };
-
   const dispatch = useDispatch();
-
+  const router = useRouter();
   const [userId, setUserId] = useState(null);
   const [loggedIn, setLoggedIn] = useState(!!userId);
-  const [socketConnected, setSocketConnected] = useState(false);
+  const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    if (!socketConnected) {
-      channel.bind('my-event', function(data) {
-        console.log('Received event:', data?.message);
-      });  
-      const id = localStorage.getItem('userId');
+    console.log('Provider rendered!!!');
+    const id = localStorage.getItem('userId');
+    setLoggedIn(!!id);
+    if (!socket) {
+      const socket = new Socket();
+      setSocket(socket);
       setUserId(id);
-      setSocketConnected(true);
     }
-  }, [userId])
-
+    if (!id) {
+      router.push('/login');
+    }
+  }, [])
 
   const logIn = () => {
     setLoggedIn(true);
   };
+
   const logOut = () => {
+    console.log("Logout initiated!!!");
     localStorage.removeItem('userId');
     setLoggedIn(false);
+    setSocket(null);
   };
 
-  const { t } = useTranslation();
-  const notifyChannelCreated = () => toast.success(t('notes.channel created'));
-  const notifyChannelRenamed = () => toast.success(t('notes.channel renamed'));
-  const notifyChannelRemoved = () => toast.success(t('notes.channel removed'));
+  // const { t } = useTranslation();
+  // const notifyChannelCreated = () => toast.success(t('notes.channel created'));
+  // const notifyChannelRenamed = () => toast.success(t('notes.channel renamed'));
+  // const notifyChannelRemoved = () => toast.success(t('notes.channel removed'));
 
   // socket.on('connect', () => {
   //   console.log('Connected to server');
@@ -88,15 +76,15 @@ const MyProvider = ({ children }) => {
   //   notifyChannelRenamed();
   // });
 
-  return (
-    <authContext.Provider value={{ loggedIn, logIn, logOut }} >
+  return true ? (
+    <authContext.Provider value={{ loggedIn, logIn, logOut, socket }} >
       <div className="d-flex flex-column h-100">
         <Nav />
         {children}
       </div>
       <ToastContainer />
     </authContext.Provider>
-  )
+  ) : null;
 }
 
 export default MyProvider;

@@ -4,7 +4,7 @@ export default function channel(req, res) {
   try {
     if (req.method === 'POST') {
       const data = req.body;
-      pusher.trigger('message', 'add-message', data)
+      pusher.trigger('channel', 'add-channel', data)
       return res.status(200).json('Message added!');
     } else if (req.method === 'PUT') {
 

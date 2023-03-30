@@ -1,17 +1,22 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Head from 'next/head';
-import PrivateRoute from '../components/PrivateRoute';
+import { useRouter } from 'next/router';
 import '../utils/i18n';
-import Pusher from 'pusher-js';
+import useAuth from '../utils/hooks/index';
+import { useDispatch } from 'react-redux';
+import { addMessage } from '../store/slices/chatSlice';
 
 const Home = () => {
-  const pusher = new Pusher('181714b03f5aa4d3cb65', {
-    cluster: 'ap2',
-  });
-  const channel = pusher.subscribe('message');
-  channel.bind('add-message', function(data) {
-    console.log('Message that need to add is - ', data);
-  });
+  const router = useRouter();
+  const auth = useAuth();
+  useEffect(() => {
+    console.log(auth);
+    if (!auth.loggedIn) {
+      router.push('/login');
+    } else {
+      router.push('/home');
+    }
+  })
 
   return (
     <>
@@ -22,7 +27,7 @@ const Home = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        <PrivateRoute></PrivateRoute>
+        <p>Redirecting</p>
       </main>
     </>
   );

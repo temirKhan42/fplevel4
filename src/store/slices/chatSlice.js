@@ -88,10 +88,13 @@ export const chatSlice = createSlice({
         currentChannelId,
       };
     },
-    addMessage: (state, action) => ({
-      ...state,
-      messages: [...state.messages, action.payload],
-    }),
+    addMessage: (state, action) => {
+      console.log(action.payload);
+      return {
+        ...state,
+        messages: [...state.messages, action.payload],
+      }
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchChannels.fulfilled, (state, action) => {

@@ -6,8 +6,8 @@ export default async function message(req, res) {
     if (req.method === 'POST') {
       connect();
       const { channelId, username, text } = req.body;
-      const currentDate = new Date();
-      await query(`INSERT INTO messages (channelid, username, text, created_at) VALUES ('${channelId}', '${username}', '${text}', to_timestamp('${currentDate}')::timestamp)`, []);
+      const currentDate = new Date().toISOString();
+      await query(`INSERT INTO messages (channelid, username, text, created_at) VALUES ('${channelId}', '${username}', '${text}', '${currentDate}')`, []);
       const { rows } = await query(`SELECT * FROM messages WHERE created_at = '${currentDate}'`, []);
       console.log('Rows from message request:', rows);
       const newMessage = rows[0];
