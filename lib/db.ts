@@ -3,13 +3,13 @@ const { Pool, Client } = require('pg');
 let pool: any = null;
 
 export function connect() {
-  console.log('connecting to DB');
+  console.log('connecting to DB', process.env.PGUSER);
   pool = new Pool({
-    user: 'temirkhan',
-    host: 'localhost',
-    database: 'fplevel4',
-    password: '1234asdzxc',
-    port: 5432,
+    user: process.env.PGUSER,
+    host: process.env.PGHOST,
+    database: process.env.PGDATABASE,
+    password: process.env.PGPASSWORD,
+    port: process.env.PGPORT,
   })
 }
 

@@ -12,7 +12,6 @@ const MyProvider = ({ children }) => {
   const [loggedIn, setLoggedIn] = useState(!!userId);
 
   useEffect(() => {
-    console.log('Provider rendered!!!');
     const id = localStorage.getItem('userId');
     setLoggedIn(!!id);
     setUserId(id);
@@ -26,7 +25,6 @@ const MyProvider = ({ children }) => {
   };
 
   function logOut() {
-    console.log("Logout initiated!!!");
     localStorage.removeItem('userId');
     setLoggedIn(false);
   };

@@ -23,6 +23,7 @@ const Home = () => {
     return () => {
       newsocket?.unBinedMessage();
       newsocket?.unBinedChannel();
+      newsocket?.unSubscribe();
     };
   }, []);
 

@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 import { useFormik } from 'formik';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 import { Form, Button, FloatingLabel } from 'react-bootstrap';
 import routes from '../utils/routes';
 import useAuth from '../utils/hooks/index';
@@ -136,7 +137,7 @@ const Footer = () => {
       <div className="text-center">
         <span>{t('acaunt question')}</span>
         {' '}
-        <a href="/signup" onClick={handleClick}>{t('signup')}</a>
+        <Link href="/signup" onClick={handleClick}>{t('signup')}</Link>
       </div>
     </div>
   );
