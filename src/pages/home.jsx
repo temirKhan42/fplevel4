@@ -1,43 +1,51 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
 import Channels from '../components/Channels';
 import Messages from '../components/Messages';
-import useAuth from '../utils/hooks';
 import { addMessage, addChannel, renameChannel, removeChannel } from '../store/slices/chatSlice';
-
+import Socket from '../utils/Socket';
 
 const Home = () => {
   const isAnyModalOpen = useSelector((state) => state.ui.isAnyModalOpen);
-  const auth = useAuth();
   const dispatch = useDispatch();
+  const { t } = useTranslation();
+  const notifyChannelCreated = () => toast.success(t('notes.channel created'));
+  const notifyChannelRenamed = () => toast.success(t('notes.channel renamed'));
+  const notifyChannelRemoved = () => toast.success(t('notes.channel removed'));
 
   useEffect(() => {
+    const newsocket = new Socket();
     console.log('Home rendered');
-    auth.socket?.onAddMessage((data) => {
-      console.log('Message that need to add is - ', data);
+    setSocketBind(newsocket);
+
+    return () => {
+      newsocket?.unBinedMessage();
+      newsocket?.unBinedChannel();
+    };
+  }, []);
+
+  const setSocketBind = (socket) => {
+    socket?.onAddMessage((data) => {
       dispatch(addMessage(data));
     });
 
-    auth.socket?.onAddChannel((data) => {
-      console.log('Channel that need to add is - ', data)
+    socket?.onAddChannel((data) => {
       dispatch(addChannel(data));
+      notifyChannelCreated();
     });
 
-    auth.socket?.onRenameChannel((data) => {
-      console.log('Channel that need to rename is - ', data);
+    socket?.onRenameChannel((data) => {
       dispatch(renameChannel(data));
+      notifyChannelRenamed();
     });
 
-    auth.socket?.onRemoveChannel((data) => {
-      console.log('Channel id that need to remove is - ', data?.id);
+    socket?.onRemoveChannel((data) => {
       dispatch(removeChannel(parseInt(data?.id)));
+      notifyChannelRemoved();
     });
-
-    return () => {
-      auth.socket?.unBinedMessage();
-      auth.socket?.unBinedChannel();
-    };
-  });
+  }
 
   return (
     <div className="container h-100 my-4 overflow-hidden rounded shadow">

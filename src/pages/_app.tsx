@@ -5,13 +5,12 @@ import { Provider } from 'react-redux';
 import { Provider as RollbarProvider, ErrorBoundary } from '@rollbar/react';
 import store from '../store/index';
 import MyProvider from '../components/Provider';
-import Socket from '../utils/Socket';
+import { useEffect } from 'react';
 
 if (process.env.NODE_ENV !== 'production') {
   // localStorage.debug = 'chat:*';
 }
 
-// injectStyle();
 export default function App({ Component, pageProps }: AppProps) {
   const rollbarConfig = {
     accessToken: 'cf96e5d807e5492fb9377e245ab7ebc3', // 'POST_CLIENT_ITEM_ACCESS_TOKEN'
@@ -22,17 +21,15 @@ export default function App({ Component, pageProps }: AppProps) {
     },
   };
 
-  const socket = new Socket();
-  socket?.onAddMessage((data:any) => {
-    console.log('Message that need to add is - ', data);
-    // dispatch(addMessage(data));
-  });
+  useEffect(() => {
+    injectStyle();
+  }, []);
 
   return (
     <RollbarProvider config={rollbarConfig}>
       <ErrorBoundary>
         <Provider store={store}>
-          <MyProvider socket={socket}>
+          <MyProvider>
             <Component {...pageProps} />
           </MyProvider>        
         </Provider>

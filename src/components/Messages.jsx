@@ -1,13 +1,11 @@
 import { useTranslation } from 'react-i18next';
 import React, { useEffect, useRef } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Formik } from 'formik';
 import { Form, InputGroup, ButtonGroup } from 'react-bootstrap';
 import * as Yup from 'yup';
 import filter from 'leo-profanity';
-import useAuth from '../utils/hooks/index';
 import { addMessage as addMessageReq } from '../utils/requests';
-import { addMessage } from '../store/slices/chatSlice';
 
 const MessageBox = () => {
   const divRef = useRef(null);
@@ -50,16 +48,9 @@ const MessageForm = () => {
   const { t } = useTranslation();
   const { currentChannelId } = useSelector((state) => state.chat);
   const inputRef = useRef();
-  const dispatch = useDispatch();
-
-  const auth = useAuth();
 
   useEffect(() => {
     inputRef.current.select();
-    // auth.socket?.onAddMessage((data) => {
-    //   console.log('Message that need to add is - ', data);
-    //   dispatch(addMessage(data));
-    // });
   });
 
   const schema = Yup.object().shape({
@@ -131,7 +122,6 @@ const MessageForm = () => {
 const Messages = () => {
   const { t } = useTranslation('translation', { keyPrefix: 'homePage.message count' });
   const { channels, currentChannelId, messages } = useSelector((state) => state.chat);
-  // console.log(channels, messages);
 
   const channel = channels.find((chan) => parseInt(chan.id) === currentChannelId);
 

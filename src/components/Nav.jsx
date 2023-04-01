@@ -17,7 +17,7 @@ const Nav = () => {
   return (
     <nav className="shadow-sm navbar navbar-expand-lg navbar-light bg-white">
       <div className="container">
-        <a href="/" className="navbar-brand">
+        <a href={auth?.loggedIn ? "/home" : "/login"} className="navbar-brand">
           Hexlet Chat
         </a>
         {auth.loggedIn ? (

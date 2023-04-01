@@ -4,13 +4,10 @@ import { useSelector } from 'react-redux';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
 import { Modal, Form, Button } from 'react-bootstrap';
-import useAuth from '../utils/hooks/index';
 import { addChannel, renameChannel, removeChannel } from '../utils/requests';
 
 const AddingForm = ({ handleHide }) => {
   const { t } = useTranslation();
-
-  const auth = useAuth();
 
   const channels = useSelector((state) => state.chat.channels);
 
@@ -36,7 +33,6 @@ const AddingForm = ({ handleHide }) => {
       onSubmit={(values) => {
         handleHide();
         addChannel(values);
-//        auth.socket.emit('newChannel', values, (res) => console.log(res));
       }}
     >
       {({
@@ -83,8 +79,6 @@ const AddingForm = ({ handleHide }) => {
 const RenamingForm = ({ handleHide, channelId }) => {
   const { t } = useTranslation();
 
-  const auth = useAuth();
-
   const channels = useSelector((state) => state.chat.channels);
 
   const inputRef = useRef();
@@ -110,10 +104,6 @@ const RenamingForm = ({ handleHide, channelId }) => {
       onSubmit={(values) => {
         handleHide();
         renameChannel({ id: channelId, ...values });
-        // auth.socket.emit('renameChannel', {
-        //   id: channelId,
-        //   ...values,
-        // }, (res) => console.log(res));
       }}
     >
       {({
@@ -160,12 +150,9 @@ const RenamingForm = ({ handleHide, channelId }) => {
 const RemovingForm = ({ handleHide, channelId }) => {
   const { t } = useTranslation();
 
-  const auth = useAuth();
-
   const handleRemove = () => {
     handleHide();
     removeChannel(channelId);
-//    auth.socket.emit('removeChannel', { id: channelId }, (res) => console.log(res));
   };
 
   return (

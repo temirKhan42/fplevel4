@@ -3,8 +3,6 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import '../utils/i18n';
 import useAuth from '../utils/hooks/index';
-import { useDispatch } from 'react-redux';
-import { addMessage } from '../store/slices/chatSlice';
 
 const Home = () => {
   const router = useRouter();

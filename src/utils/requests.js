@@ -27,10 +27,7 @@ export async function removeChannel(id) {
 
 export async function renameChannel({ id, name}) {
   try {
-    const { data } = await axios.put(routes['channel'](), {
-      id,
-      name
-    });
+    const { data } = await axios.put(routes['channel'](), { id, name });
   } catch(err) {
     console.error('Rename channel failed');
   }

@@ -10,7 +10,6 @@ export default async function channel(req, res) {
       const currentDate = new Date().toISOString();
       await query(`INSERT INTO channels (name, removable, created_at) VALUES ('${name}', '${true}', '${currentDate}')`, []);
       const { rows } = await query(`SELECT * FROM channels WHERE created_at = '${currentDate}'`, []);
-      console.log('Rows from new-channel request:', rows);
       const newChannel = rows[0];
       pusher.trigger('channel', 'add-channel', newChannel);
 
@@ -22,7 +21,6 @@ export default async function channel(req, res) {
       const { id, name } = req.body;
       await query(`UPDATE channels SET name = '${name}' WHERE id = ${id}`, []);
       const { rows } = await query(`SELECT * FROM channels WHERE id = ${id}`, []);
-      console.log('Rows from rename-channel request:', rows);
       const renamedChannel = rows[0];
       pusher.trigger('channel', 'rename-channel', renamedChannel);
       
@@ -32,10 +30,8 @@ export default async function channel(req, res) {
       connect();
 
       const { id } = req.body;
-      console.log(id);
       await query(`DELETE from messages WHERE channelid = ${id}`, []);
       await query(`DELETE from channels WHERE id = ${id}`, []);
-      console.log('ID from removed-channel request:', id);
       const removedChannelId = { id };
       pusher.trigger('channel', 'remove-channel', removedChannelId);
 
