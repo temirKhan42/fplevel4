@@ -9,21 +9,17 @@ export async function addMessage(message) {
   }
 };
 
-export async function addChannel(channel) {
+export async function addChannel({ name }) {
   try {
-    const { data } = await axios.post(routes['channel'](), {
-      channel,
-    });
+    const { data } = await axios.post(routes['channel'](), { name });
   } catch(err) {
     console.error('Add channel failed');
   }
 };
 
-export async function removeChannel(channelId) {
+export async function removeChannel(id) {
   try {
-    const { data } = await axios.delete(routes['channel'](), {
-      channelId,
-    });
+    const { data } = await axios.delete(routes['channel'](), { data: { id } });
   } catch(err) {
     console.error('Remove channel failed');
   }

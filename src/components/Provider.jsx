@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useLayoutEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { io } from 'socket.io-client';
 import { useTranslation } from 'react-i18next';
@@ -23,14 +23,15 @@ const MyProvider = ({ children }) => {
   const [loggedIn, setLoggedIn] = useState(!!userId);
   const [socket, setSocket] = useState(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     console.log('Provider rendered!!!');
     const id = localStorage.getItem('userId');
     setLoggedIn(!!id);
+    setUserId(id);
     if (!socket) {
+      console.log('Socket initiated!!');
       const socket = new Socket();
       setSocket(socket);
-      setUserId(id);
     }
     if (!id) {
       router.push('/login');

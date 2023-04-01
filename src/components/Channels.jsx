@@ -168,7 +168,7 @@ const ChannelList = () => {
   return (
     <ul className="nav flex-column nav-pills nav-fill px-2">
       {channels.map(({ id, name, removable }) => {
-        const btnSecondary = { 'btn-secondary': id === currentChannelId };
+        const btnSecondary = { 'btn-secondary': parseInt(id) === currentChannelId };
         const btnClasses = classNames('w-100 rounded-0 text-start btn', {
           'text-truncate': removable,
           ...btnSecondary,
@@ -179,7 +179,7 @@ const ChannelList = () => {
             <RemovableChannel
               key={`${id}-${name}`}
               name={name}
-              id={id}
+              id={parseInt(id)}
               btnClasses={btnClasses}
               btnSecondary={btnSecondary}
             />
@@ -188,7 +188,7 @@ const ChannelList = () => {
             <UnremovableChannel
               key={`${id}-${name}`}
               name={name}
-              id={id}
+              id={parseInt(id)}
               btnClasses={btnClasses}
             />
           )

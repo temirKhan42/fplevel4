@@ -5,6 +5,7 @@ import * as Yup from 'yup';
 import { Formik } from 'formik';
 import { Modal, Form, Button } from 'react-bootstrap';
 import useAuth from '../utils/hooks/index';
+import { addChannel, renameChannel, removeChannel } from '../utils/requests';
 
 const AddingForm = ({ handleHide }) => {
   const { t } = useTranslation();
@@ -34,7 +35,8 @@ const AddingForm = ({ handleHide }) => {
       validationSchema={schema}
       onSubmit={(values) => {
         handleHide();
-        auth.socket.emit('newChannel', values, (res) => console.log(res));
+        addChannel(values);
+//        auth.socket.emit('newChannel', values, (res) => console.log(res));
       }}
     >
       {({
@@ -90,7 +92,7 @@ const RenamingForm = ({ handleHide, channelId }) => {
     inputRef.current.select();
   }, []);
 
-  const [{ name: channelName }] = channels.filter(({ id }) => id === channelId);
+  const [{ name: channelName }] = channels.filter(({ id }) => parseInt(id) === channelId);
 
   const channelsNames = channels.map(({ name }) => name);
   const schema = Yup.object().shape({
@@ -107,10 +109,11 @@ const RenamingForm = ({ handleHide, channelId }) => {
       validationSchema={schema}
       onSubmit={(values) => {
         handleHide();
-        auth.socket.emit('renameChannel', {
-          id: channelId,
-          ...values,
-        }, (res) => console.log(res));
+        renameChannel({ id: channelId, ...values });
+        // auth.socket.emit('renameChannel', {
+        //   id: channelId,
+        //   ...values,
+        // }, (res) => console.log(res));
       }}
     >
       {({
@@ -161,7 +164,8 @@ const RemovingForm = ({ handleHide, channelId }) => {
 
   const handleRemove = () => {
     handleHide();
-    auth.socket.emit('removeChannel', { id: channelId }, (res) => console.log(res));
+    removeChannel(channelId);
+//    auth.socket.emit('removeChannel', { id: channelId }, (res) => console.log(res));
   };
 
   return (

@@ -29,7 +29,7 @@ const defaultChannelId = 1;
 const initialState = {
   channels: [], // [{ id: 1, name: '', removable: true }, {}, {}]
   currentChannelId: 1,
-  messages: [], // [{ channelId: 1, id: 1, userName: '', body: '' }, {}, {}]
+  messages: [], // [{ channelId: 1, id: 1, userName: '', text: '' }, {}, {}]
 };
 
 export const fetchChannels = createAsyncThunk(
@@ -48,17 +48,17 @@ export const chatSlice = createSlice({
   reducers: {
     setCurrentChannel: (state, action) => ({
       ...state,
-      currentChannelId: action.payload,
+      currentChannelId: parseInt(action.payload),
     }),
     addChannel: (state, action) => ({
       ...state,
-      channels: [...state.channels, action.payload],
-      currentChannelId: action.payload.id,
+      channels: [...state.channels, { ...action.payload, id: parseInt(action.payload?.id)}],
+      currentChannelId: parseInt(action.payload.id),
     }),
     renameChannel: (state, action) => {
-      const newChannel = action.payload;
+      const newChannel = { ...action.payload, id: parseInt(action.payload?.id)};
       const newChannels = state.channels.map((channel) => {
-        if (channel.id === newChannel.id) {
+        if (parseInt(channel.id) === newChannel.id) {
           return newChannel;
         }
         return channel;
@@ -70,17 +70,17 @@ export const chatSlice = createSlice({
       };
     },
     removeChannel: (state, action) => {
-      const removingId = action.payload;
+      const removingId = parseInt(action.payload);
 
       const currentChannelId = removingId === state.currentChannelId
         ? defaultChannelId
         : state.currentChannelId;
 
       const newChannels = state.channels
-        .filter(({ id }) => id !== removingId);
+        .filter(({ id }) => parseInt(id) !== removingId);
 
       const newMessages = state.messages
-        .filter(({ channelId }) => channelId !== removingId);
+        .filter(({ channelId }) => parseInt(channelId) !== removingId);
 
       return {
         channels: newChannels,
@@ -89,20 +89,24 @@ export const chatSlice = createSlice({
       };
     },
     addMessage: (state, action) => {
-      console.log(action.payload);
       return {
         ...state,
-        messages: [...state.messages, action.payload],
+        messages: [...state.messages, { ...action.payload, id: parseInt(action.payload?.id) }],
       }
     },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchChannels.fulfilled, (state, action) => {
-      
+      const channels = action.payload.channels.map((chan) => {
+        return {...chan, id: parseInt(chan?.id) };
+      });
+      const messages = action.payload.messages.map((mes) => {
+        return { ...mes, id: parseInt(mes?.id) };
+      })
       return {
-        channels: action.payload.channels,
+        channels,
         currentChannelId: action.payload.currentChannelId,
-        messages: action.payload.messages,
+        messages,
       }
     });
   },

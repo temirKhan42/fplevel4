@@ -6,26 +6,37 @@ export default class Socket {
       cluster: 'ap2',
     });
     this.pusher = pusher;
+    this.message = pusher.subscribe('message');
+    this.channel = pusher.subscribe('channel');
   }
   
   onAddMessage(cb) {
-    const channel = this.pusher.subscribe('message');
-    channel.bind('add-message', cb);
+    this.message.bind('add-message', cb);
   }  
 
   onAddChannel(cb) {
-    const channel = this.pusher.subscribe('channel');
-    channel.bind('add-channel', cb);
-  }  
-
-  onRemoveChannel(cb) {
-    const channel = this.pusher.subscribe('channel');
-    channel.bind('remove-channel', cb);
+    this.channel.bind('add-channel', cb);
   }  
 
   onRenameChannel(cb) {
-    const channel = this.pusher.subscribe('channel');
-    channel.bind('rename-channel', cb);
+    this.channel.bind('rename-channel', cb);
+  }
+
+  onRemoveChannel(cb) {
+    this.channel.bind('remove-channel', cb);
+  }
+
+  unBinedMessage() {
+    this.message.unbind_all();
+  }
+  
+  unBinedChannel() {
+    this.channel.unbind_all();
+  }
+
+  unSubscribe() {
+    this.message.unsubscribe();
+    this.channel.unsubscribe();
   }
 }
 

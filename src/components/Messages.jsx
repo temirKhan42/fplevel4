@@ -1,12 +1,13 @@
 import { useTranslation } from 'react-i18next';
 import React, { useEffect, useRef } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Formik } from 'formik';
 import { Form, InputGroup, ButtonGroup } from 'react-bootstrap';
 import * as Yup from 'yup';
 import filter from 'leo-profanity';
 import useAuth from '../utils/hooks/index';
-import { addMessage } from '../utils/requests';
+import { addMessage as addMessageReq } from '../utils/requests';
+import { addMessage } from '../store/slices/chatSlice';
 
 const MessageBox = () => {
   const divRef = useRef(null);
@@ -16,15 +17,14 @@ const MessageBox = () => {
   });
 
   const { currentChannelId, messages } = useSelector((state) => state.chat);
-
   return (
     <div id="messages-box" className="chat-messages overflow-auto px-5">
       {messages
-        .filter(({ channelId }) => channelId === currentChannelId)
+        .filter(({ channelid }) => parseInt(channelid) === currentChannelId)
         .map(({
-          channelId, id, username, text,
+          channelid, id, username, text,
         }) => (
-          <div key={`${channelId}-${id}`} className="text-break mb-2">
+          <div key={`${channelid}-${id}`} className="text-break mb-2">
             <b>{username}</b>
             {`: ${text}`}
           </div>
@@ -50,14 +50,17 @@ const MessageForm = () => {
   const { t } = useTranslation();
   const { currentChannelId } = useSelector((state) => state.chat);
   const inputRef = useRef();
-  useEffect(() => {
-    inputRef.current.select();
-    auth.socket?.onAddMessage((data) => {
-      console.log('Message that need to add is - ', data);
-    });
-  });
+  const dispatch = useDispatch();
 
   const auth = useAuth();
+
+  useEffect(() => {
+    inputRef.current.select();
+    // auth.socket?.onAddMessage((data) => {
+    //   console.log('Message that need to add is - ', data);
+    //   dispatch(addMessage(data));
+    // });
+  });
 
   const schema = Yup.object().shape({
     body: Yup.string().required(t('error messages.required')),
@@ -76,7 +79,7 @@ const MessageForm = () => {
           username,
           text,
         };
-        addMessage(newMessage);
+        addMessageReq(newMessage);
       }}
     >
       {({
@@ -126,11 +129,9 @@ const MessageForm = () => {
 };
 
 const Messages = () => {
-
-
   const { t } = useTranslation('translation', { keyPrefix: 'homePage.message count' });
   const { channels, currentChannelId, messages } = useSelector((state) => state.chat);
-  console.log(channels, currentChannelId);
+  // console.log(channels, messages);
 
   const channel = channels.find((chan) => parseInt(chan.id) === currentChannelId);
 

@@ -5,6 +5,7 @@ import { Provider } from 'react-redux';
 import { Provider as RollbarProvider, ErrorBoundary } from '@rollbar/react';
 import store from '../store/index';
 import MyProvider from '../components/Provider';
+import Socket from '../utils/Socket';
 
 if (process.env.NODE_ENV !== 'production') {
   // localStorage.debug = 'chat:*';
@@ -21,11 +22,17 @@ export default function App({ Component, pageProps }: AppProps) {
     },
   };
 
+  const socket = new Socket();
+  socket?.onAddMessage((data:any) => {
+    console.log('Message that need to add is - ', data);
+    // dispatch(addMessage(data));
+  });
+
   return (
     <RollbarProvider config={rollbarConfig}>
       <ErrorBoundary>
         <Provider store={store}>
-          <MyProvider>
+          <MyProvider socket={socket}>
             <Component {...pageProps} />
           </MyProvider>        
         </Provider>
